@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from typing import List
 from models.schema import Category, CategoryIn, CategoryOut
-from tortoise.contrib.fastapi import HTTPNotFoundError
+from .exceptions_handler import NotFoundError
 
 router = APIRouter()
 
@@ -14,7 +14,7 @@ async def create_category(category: CategoryIn):
 async def get_category(category_id: int):
     category_obj = await Category.filter(id=category_id).first()
     if not category_obj:
-        raise HTTPNotFoundError(detail="Category not found")
+        raise NotFoundError(detail={"message": "Category not found"})
     return CategoryOut.from_orm(category_obj)
 
 @router.get("/", response_model=List[CategoryOut])
@@ -32,5 +32,5 @@ async def update_category(category_id: int, category: CategoryIn):
 async def delete_category(category_id: int):
     deleted_count = await Category.filter(id=category_id).delete()
     if not deleted_count:
-        raise HTTPNotFoundError(detail="Category not found")
+        raise NotFoundError(detail={"message": "Category not found"})
     return {"message": "Category deleted"}

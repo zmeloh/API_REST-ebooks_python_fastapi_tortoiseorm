@@ -1,7 +1,7 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from typing import List
 from models.schema import Favorite, FavoriteIn, FavoriteOut, UserOut, EbookOut
-from tortoise.contrib.fastapi import HTTPNotFoundError
+from .exceptions_handler import NotFoundError
 
 router = APIRouter()
 
@@ -14,7 +14,7 @@ async def create_favorite(favorite: FavoriteIn):
 async def get_favorite(favorite_id: int):
     favorite_obj = await Favorite.filter(id=favorite_id).first()
     if not favorite_obj:
-        raise HTTPNotFoundError(detail="Favorite not found")
+        raise NotFoundError(detail={"message": "Favorite not found"})
     return FavoriteOut.from_orm(favorite_obj)
 
 @router.get("/", response_model=List[FavoriteOut])
@@ -32,5 +32,5 @@ async def update_favorite(favorite_id: int, favorite: FavoriteIn):
 async def delete_favorite(favorite_id: int):
     deleted_count = await Favorite.filter(id=favorite_id).delete()
     if not deleted_count:
-        raise HTTPNotFoundError(detail="Favorite not found")
+        raise NotFoundError(detail={"message": "Favorite not found"})
     return {"message": "Favorite deleted"}

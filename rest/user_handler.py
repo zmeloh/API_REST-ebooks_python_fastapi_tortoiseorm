@@ -1,7 +1,7 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from typing import List
 from models.schema import User, UserIn, UserOut
-from tortoise.contrib.fastapi import HTTPNotFoundError
+from .exceptions_handler import NotFoundError
 
 router = APIRouter()
 
@@ -14,7 +14,7 @@ async def create_user(user: UserIn):
 async def get_user(user_id: int):
     user_obj = await User.filter(id=user_id).first()
     if not user_obj:
-        raise HTTPNotFoundError(detail="User not found")
+        raise NotFoundError(detail={"message": "User not found"})
     return UserOut.from_orm(user_obj)
 
 @router.get("/", response_model=List[UserOut])
@@ -32,5 +32,5 @@ async def update_user(user_id: int, user: UserIn):
 async def delete_user(user_id: int):
     deleted_count = await User.filter(id=user_id).delete()
     if not deleted_count:
-        raise HTTPNotFoundError(detail="User not found")
+        raise NotFoundError(detail={"message": "User not found"})
     return {"message": "User deleted"}

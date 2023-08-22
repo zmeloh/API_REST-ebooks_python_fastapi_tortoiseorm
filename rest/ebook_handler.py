@@ -1,7 +1,7 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from typing import List
 from models.schema import Ebook, EbookIn, EbookOut, CategoryOut
-from tortoise.contrib.fastapi import HTTPNotFoundError
+from .exceptions_handler import NotFoundError
 
 router = APIRouter()
 
@@ -14,7 +14,7 @@ async def create_ebook(ebook: EbookIn):
 async def get_ebook(ebook_id: int):
     ebook_obj = await Ebook.filter(id=ebook_id).first()
     if not ebook_obj:
-        raise HTTPNotFoundError(detail="Ebook not found")
+        raise NotFoundError(detail={"message": "Ebook not found"})
     return EbookOut.from_orm(ebook_obj)
 
 @router.get("/", response_model=List[EbookOut])
@@ -32,5 +32,5 @@ async def update_ebook(ebook_id: int, ebook: EbookIn):
 async def delete_ebook(ebook_id: int):
     deleted_count = await Ebook.filter(id=ebook_id).delete()
     if not deleted_count:
-        raise HTTPNotFoundError(detail="Ebook not found")
+        raise NotFoundError(detail={"message": "Ebook not found"})
     return {"message": "Ebook deleted"}

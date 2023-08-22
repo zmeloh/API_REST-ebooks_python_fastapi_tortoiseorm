@@ -29,7 +29,6 @@ class CategoryIn(BaseModel):
 class CategoryOut(CategoryIn):
     id: int
     class Config:
-        orm_mode = True
         from_attributes = True 
 
 class EbookIn(BaseModel):
@@ -40,7 +39,6 @@ class EbookIn(BaseModel):
 class EbookOut(EbookIn):
     id: int
     class Config:
-        orm_mode = True
         from_attributes = True 
 
 class UserIn(BaseModel):
@@ -50,8 +48,7 @@ class UserIn(BaseModel):
 
 class UserOut(UserIn):
     id: int
-    class Config:
-        orm_mode = True
+    class Config: 
         from_attributes = True 
         
 class FavoriteIn(BaseModel):
@@ -61,5 +58,4 @@ class FavoriteIn(BaseModel):
 class FavoriteOut(FavoriteIn):
     id: int
     class Config:
-        orm_mode = True
         from_attributes = True 
